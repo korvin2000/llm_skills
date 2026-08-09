@@ -25,9 +25,9 @@ same twelve things fifteen times.
 
 | Read | For | Cost |
 |---|---|---|
-| [docs/SYNTHESIS.md](docs/SYNTHESIS.md) | Merged findings, the 6 real disagreements with adopted verdicts, contradictory numbers, 15 single-source techniques, the canonical 8-stage pipeline, open questions. **Read before any design decision.** | ~4K tok |
-| [docs/INDEX.md](docs/INDEX.md) | Routing table — which dossier answers which question, and each dossier's distinctive contribution | ~2K tok |
-| [docs/EVIDENCE.md](docs/EVIDENCE.md) | 41 arXiv citations, all unverified, 3 known ID conflicts. Read before quoting any number outside this repo | ~2K tok |
+| [docs/SYNTHESIS.md](docs/SYNTHESIS.md) | Merged findings, the 6 real disagreements with adopted verdicts, contradictory numbers, 15 single-source techniques, the canonical 8-stage pipeline, open questions. **Read before any design decision.** | ~5.5K tok |
+| [docs/INDEX.md](docs/INDEX.md) | Routing table — which dossier answers which question, and each dossier's distinctive contribution | ~2.3K tok |
+| [docs/EVIDENCE.md](docs/EVIDENCE.md) | 41 arXiv citations, all unverified, 3 known ID conflicts. Read before quoting any number outside this repo | ~2.6K tok |
 
 Individual dossiers are read-on-demand. Open one only when SYNTHESIS or INDEX points at it.
 

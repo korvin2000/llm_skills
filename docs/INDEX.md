@@ -23,8 +23,8 @@ Written by this project. These supersede the raw dossiers for day-to-day work.
 
 | File | Lines | What's inside | When to read |
 |---|---:|---|---|
-| [SYNTHESIS.md](SYNTHESIS.md) | ~330 | Consensus findings, the 6 real disagreements with adopted verdicts, contradictory numbers, 15 single-source techniques, the canonical 8-stage pipeline, open questions | **Always, first.** Before any design decision |
-| [EVIDENCE.md](EVIDENCE.md) | ~130 | Citation ledger: 41 arXiv IDs with citing dossiers and verification status, known citation conflicts, primary vendor docs, prior-art repos | Before citing a number externally, or when a claim looks too good |
+| [SYNTHESIS.md](SYNTHESIS.md) | 366 | Consensus findings, the 6 real disagreements with adopted verdicts, contradictory numbers, 15 single-source techniques, the canonical 8-stage pipeline, open questions | **Always, first.** Before any design decision |
+| [EVIDENCE.md](EVIDENCE.md) | 152 | Citation ledger: 41 arXiv IDs with citing dossiers and verification status, known citation conflicts, primary vendor docs, prior-art repos | Before citing a number externally, or when a claim looks too good |
 | [INDEX.md](INDEX.md) | this | Corpus map and routing | When the synthesis points you to a dossier and you need to pick one |
 
 ---
