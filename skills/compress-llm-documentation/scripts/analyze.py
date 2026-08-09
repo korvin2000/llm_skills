@@ -357,6 +357,13 @@ def check_budgets(doc, stats):
             flag("HIGH", "frontmatter has no description: the skill cannot be routed to", "[V4] hard limit")
         elif len(desc) > 1024:
             flag("HIGH", "description %d chars: max is 1024" % len(desc), "[V4] hard limit")
+        elif len(desc) < 40 or len(desc.split()) < 6:
+            # A present-but-thin description is functionally close to a missing one: it is
+            # the single most common cause of a skill that exists but never triggers, and
+            # that failure is silent -- nothing errors, the skill just never gets consulted.
+            flag("HIGH", "description %d chars / %d words: too thin to carry both what the "
+                 "skill does and when to use it" % (len(desc), len(desc.split())),
+                 "[C] skill-creator triggering guidance")
         if name and (len(name) > 64 or not re.fullmatch(r"[a-z0-9-]+", name)):
             flag("HIGH", "name must be <=64 chars of [a-z0-9-]; found %r" % name[:80], "[V4] hard limit")
 
@@ -478,6 +485,19 @@ def digest(report):
     )
     out.append("originals snapshot: %s" % report["original_dir"])
     out.append("full detail:        %s" % report["json_path"])
+    out.append("")
+    if t["fast_path"]:
+        out.append(
+            "FAST PATH: 0 H-severity findings, 0 HIGH budget flags, 0 conflicts. Skip the full "
+            "unit-by-unit ledger (stage 3) -- confirm there is nothing worth a human decision "
+            "(check any M/L findings and duplicate candidates above), then go straight to a short "
+            "stage-9 report. Do not edit the file just to demonstrate effort."
+        )
+    else:
+        out.append(
+            "%d H-severity finding(s), %d HIGH budget flag(s), %d conflict(s) -- walk the full "
+            "ledger at stage 3." % (t["h_severity_findings"], t["high_budget_flags"], len(report["conflicts"]))
+        )
     return "\n".join(out)
 
 
@@ -512,6 +532,24 @@ def main(argv=None):
         print("No readable input files.", file=sys.stderr)
         return 0
 
+    conflicts = detect_conflicts(docs)
+
+    h_hits = sum(
+        len(data["hits"])
+        for f in file_reports
+        for data in f["findings"].values()
+        if data["severity"] == "H"
+    )
+    high_budget = sum(
+        1 for f in file_reports for bf in f["budget_flags"] if bf["level"] == "HIGH"
+    )
+    # Fast path: nothing an H-severity detector or a hard platform limit flagged, and no
+    # reported conflict. This is a green light to skip straight to a short report at stage
+    # 3 -- not a promise the file is perfect, just that the expensive full ledger is
+    # unlikely to earn its tokens. M/L findings and duplicate candidates still deserve a
+    # human glance if the level is medium/max, but they do not block the fast path.
+    fast_path = h_hits == 0 and high_budget == 0 and not conflicts
+
     totals = {
         "files": len(file_reports),
         "bytes": sum(f["stats"]["bytes"] for f in file_reports),
@@ -520,6 +558,9 @@ def main(argv=None):
         "token_method": file_reports[0]["stats"]["token_method"],
         "directives": sum(f["modality"]["total"] for f in file_reports),
         "anchors": sum(f["anchor_total"] for f in file_reports),
+        "h_severity_findings": h_hits,
+        "high_budget_flags": high_budget,
+        "fast_path": fast_path,
     }
 
     report = {
@@ -531,7 +572,7 @@ def main(argv=None):
         "json_path": str(out_dir / "analysis.json"),
         "files": file_reports,
         "duplicates": detect_duplicates(docs),
-        "conflicts": detect_conflicts(docs),
+        "conflicts": conflicts,
         "totals": totals,
     }
 

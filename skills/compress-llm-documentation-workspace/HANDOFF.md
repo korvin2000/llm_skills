@@ -1,7 +1,9 @@
-# compress-llm-documentation — state at end of session 1
+# compress-llm-documentation — state after session 2
 
-Iteration 1 is complete and measured. The skill is usable now. This file is what a fresh session
-needs to pick it up.
+Iteration 1 is complete and measured (see below, unchanged). Session 2 implemented all three
+iteration-2 improvements iteration 1 identified, made the skill auto-discoverable, and ran one
+targeted regression check rather than the full 8-run matrix (see "Session 2" at the bottom —
+read that first if you only have a minute).
 
 ## What exists
 
@@ -88,18 +90,82 @@ a harness quirk of the eval setup, not a skill problem, but it cost each run a r
 ```bash
 python skills/compress-llm-documentation/scripts/analyze.py FILE --out WORKDIR --repo-root .
 python skills/compress-llm-documentation/scripts/verify.py --work WORKDIR --after FILE --plan WORKDIR/plan.json
-python skills/compress-llm-documentation-workspace/grade.py iteration-1
+python skills/compress-llm-documentation/scripts/verify.py --work WORKDIR --after DRAFT --emit-plan WORKDIR/plan.json
+python skills/compress-llm-documentation-workspace/grade.py iteration-1   # or iteration-2
 ```
+
+## Session 2 — all three iteration-2 improvements shipped
+
+Read `session.md` for the session-1 narrative; this section covers session 2 only. Kept to one
+targeted regression test rather than re-running the full 8-run matrix, per the token-conservation
+brief — reasoning (contrastive fixture comparison, dry-run of both scripts) did the rest of the
+verification work instead of spawning more agents.
+
+**1. Cheap early exit — done.** `analyze.py` now computes `totals.fast_path` (0 H-severity
+findings, 0 HIGH budget flags, 0 conflicts) and prints a `FAST PATH` line in the digest.
+`SKILL.md` stage 2 tells the model to skip the full stage-3 ledger and go straight to a short
+stage-9 report when it sees this. Verified by re-running eval-1 (already-good) end to end with
+the updated skill: **50,307 tokens / 122.5 s**, down from iteration-1's 90,294 tokens / 395 s for
+the identical task — a 44% token cut and 3.2× faster, output still byte-identical to the source,
+still 11/11 assertions (`grade.py iteration-2`). Full transcript-derived report is in
+`iteration-2/eval-1-already-good/with_skill/outputs/stage9-result.md`.
+
+While building the discriminator, contrastive testing across all four fixtures caught a real gap
+before it shipped: the naive fast-path rule (H-severity + budgets only) would have wrongly fired
+on the `fat-skill` fixture, whose entire defect is a 2-word, non-routing `description:` — a real
+problem no existing detector flagged as HIGH. Added a new budget check (`analyze.py`, `art ==
+"skill"` branch): a present-but-thin description (<40 chars or <6 words) now flags HIGH, same
+severity class as a missing one. Re-checked all four fixtures after the fix —
+`already-good` is the only one where `fast_path: true`, as it should be.
+
+**2. Plan scaffolder — done.** `verify.py --emit-plan OUT.json` diffs a draft `--after` against
+the snapshot, writes every genuinely-lost anchor into `released_anchors` with a
+`<!-- GAP: ... -->`-style placeholder reason (merging with an existing `--plan` rather than
+clobbering it), and leaves the model to supply only the reason. De-emphasised anchors (survive as
+plain prose) are correctly excluded, matching `check_anchors`' own soft-loss rule. Verified locally
+against the bloated-monorepo fixture: a synthetic draft that dropped `` `pnpm lint:fix` `` produced
+a one-entry scaffold; filling in the reason and re-running `verify.py --plan` normally passed the
+real gate (`anchor-loss: 0 unapproved losses (1 approved by plan)`). Documented in `SKILL.md`
+stage 4 and `references/validation.md`.
+
+**3. Right-size the ledger — done.** `SKILL.md` stage 3 and `references/preservation.md` now say
+explicitly that ledger depth should scale with what `analyze.py` found, not with the size of the
+field table — a short decision list for a small/clean file, the full per-unit table only where
+findings are dense or contested. This is prose guidance, not a script gate; there's no mechanical
+way to verify a model "right-sized" its own ledger, so treat this one as a soft win to watch for
+in the next human review pass, not a proven number like the other two.
+
+**Discoverability — done.** Claude Code only loads skills from `.claude/skills/`; the skill lives
+at `skills/compress-llm-documentation/` per this repo's `CLAUDE.md`. Created an NTFS junction
+(`.claude/skills/compress-llm-documentation` → `skills/compress-llm-documentation/`) so the skill
+now appears in the available-skills list without duplicating any files. **Not committed** —
+junctions don't round-trip through git or other platforms, so it's gitignored with a comment
+explaining how to recreate it:
+```bash
+cmd /c mklink /J .claude\skills\compress-llm-documentation skills\compress-llm-documentation
+```
+Anyone cloning this repo on Windows needs to run that once; a non-Windows/non-junction equivalent
+is an open question (symlink + `core.symlinks=true`, most likely) if this ever needs to travel.
+
+**Regression check.** Re-ran the package's own worked example
+(`examples/root-before.md` → `root-after.md` against `examples/plan.json`) through the modified
+`verify.py`/`analyze.py` — still `PASS with warnings`, same warnings as before the changes.
+Confirms neither script's edits altered gate behaviour for existing content.
 
 ## Not done yet
 
 - No human review pass on the outputs. `review-iteration-1.html` is generated and unopened; the
-  feedback loop in the skill-creator workflow stops there.
-- No iteration 2, so no `--previous-workspace` comparison exists.
+  feedback loop in the skill-creator workflow stops there. `iteration-2/` has no viewer yet either
+  — only one eval ran, and a viewer felt like more ceremony than one data point warrants.
+- Evals 0, 2, 3 (bloated-root, fat-skill, conflict-injection) were not re-run with the updated
+  skill — they were already correctly *not* taking the fast path (see the contrastive check
+  above), so the fast-path change shouldn't touch their behaviour, but that's reasoning, not a
+  measurement. If tokens allow, re-running eval-0 is the next highest-value check: it's the
+  eval-1 improvement's fraternal-twin risk case (largest file, most findings) where a right-sized
+  ledger (improvement 3) would show up most clearly, and it's the one where a run improvised its
+  own `make_plan.py` — worth confirming `--emit-plan` actually gets used instead this time.
 - Description-triggering optimisation (`run_loop.py`) never run — it needs the skill to be final.
 - No behavioural A/B/C. Every run reported it as NOT RUN rather than faking it.
 - `CLAUDE.md` still says "Status: research complete, nothing implemented", which is now false.
   Left unedited deliberately — it is a project-instruction file and the change should be the
   user's call.
-- The skill lives at `skills/compress-llm-documentation/` per CLAUDE.md. Claude Code discovers
-  skills under `.claude/skills/`, so it must be copied or linked there to load automatically.

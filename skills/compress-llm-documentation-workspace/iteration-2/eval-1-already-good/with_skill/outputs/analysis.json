@@ -1,0 +1,220 @@
+{
+ "tool": "compress-llm-documentation/analyze.py",
+ "version": 1,
+ "generated": "2026-08-09T20:27:02",
+ "repo_root": "C:\\work.ai\\llm_skills",
+ "original_dir": "skills\\compress-llm-documentation-workspace\\iteration-2\\eval-1-already-good\\with_skill\\outputs\\original",
+ "json_path": "skills\\compress-llm-documentation-workspace\\iteration-2\\eval-1-already-good\\with_skill\\outputs\\analysis.json",
+ "files": [
+  {
+   "file": "skills\\compress-llm-documentation-workspace\\fixtures\\already-good\\AGENTS.md",
+   "name": "AGENTS.md",
+   "artifact": "root-rules",
+   "stats": {
+    "bytes": 1453,
+    "lines": 44,
+    "tokens": 372,
+    "body_tokens": 372,
+    "token_method": "ESTIMATE",
+    "sections": 6,
+    "headings": 7,
+    "max_heading_level": 2,
+    "fences": 0,
+    "fence_lines": 0,
+    "comments": 0,
+    "block_comments": 0,
+    "frontmatter": false,
+    "frontmatter_keys": [],
+    "artifact": "root-rules"
+   },
+   "budget_flags": [],
+   "anchors": {
+    "code": [
+     "13",
+     "ctx",
+     "docker compose up -d postgres",
+     "docs/ledger-model.md",
+     "docs/webhooks.md",
+     "float64",
+     "go generate ./...",
+     "go test ./...",
+     "go test ./internal/ledger -run TestName",
+     "golangci-lint run",
+     "int64",
+     "internal/api/contract_test.go",
+     "internal/ledger/balance.go",
+     "internal/webhook/",
+     "main"
+    ],
+    "fence_line": [],
+    "url": [],
+    "path": [
+     "docs/ledger-model.md",
+     "docs/webhooks.md",
+     "internal/api/contract_test.go",
+     "internal/ledger/balance.go",
+     "internal/webhook/"
+    ],
+    "version": [
+     "1.23"
+    ],
+    "const": [],
+    "number_unit": []
+   },
+   "anchor_counts": {
+    "code": 15,
+    "fence_line": 0,
+    "url": 0,
+    "path": 5,
+    "version": 1,
+    "const": 0,
+    "number_unit": 0
+   },
+   "anchor_total": 21,
+   "directives": [
+    {
+     "line": 17,
+     "modality": "NEVER",
+     "text": "- Money is `int64` minor units. Never `float64` \u2014 rounding drift is unrecoverable once written.",
+     "anchors": [
+      "float64",
+      "int64"
+     ],
+     "heading": "Invariants"
+    },
+    {
+     "line": 25,
+     "modality": "NEVER",
+     "text": "- The Stripe sandbox rejects amounts ending in `13`. Test fixtures avoid them on purpose.",
+     "anchors": [
+      "13"
+     ],
+     "heading": "Gotchas"
+    },
+    {
+     "line": 29,
+     "modality": "NEVER",
+     "text": "NEVER run migrations against prod; Argo does it on merge.",
+     "anchors": [],
+     "heading": "Boundaries"
+    },
+    {
+     "line": 30,
+     "modality": "NEVER",
+     "text": "NEVER commit to `main`; it is protected.",
+     "anchors": [
+      "main"
+     ],
+     "heading": "Boundaries"
+    },
+    {
+     "line": 31,
+     "modality": "IMPERATIVE",
+     "text": "ASK before adding a dependency \u2014 the vendor directory is reviewed.",
+     "anchors": [],
+     "heading": "Boundaries"
+    }
+   ],
+   "modality": {
+    "NEVER": 4,
+    "MUST": 0,
+    "HEDGE": 0,
+    "IMPERATIVE": 1,
+    "total": 5
+   },
+   "headings": [
+    {
+     "line": 1,
+     "level": 1,
+     "text": "AGENTS.md"
+    },
+    {
+     "line": 5,
+     "level": 2,
+     "text": "Commands"
+    },
+    {
+     "line": 15,
+     "level": 2,
+     "text": "Invariants"
+    },
+    {
+     "line": 21,
+     "level": 2,
+     "text": "Gotchas"
+    },
+    {
+     "line": 27,
+     "level": 2,
+     "text": "Boundaries"
+    },
+    {
+     "line": 33,
+     "level": 2,
+     "text": "Read when needed"
+    },
+    {
+     "line": 40,
+     "level": 2,
+     "text": "Done"
+    }
+   ],
+   "fences": [],
+   "comments": [],
+   "findings": {
+    "smart-punctuation": {
+     "severity": "L",
+     "note": "T1.15 ASCII equivalents tokenise cheaper and survive copy-paste",
+     "hits": [
+      {
+       "line": 17,
+       "match": "\u2014",
+       "text": "- Money is `int64` minor units. Never `float64` \u2014 rounding drift is unrecoverable once written."
+      },
+      {
+       "line": 31,
+       "match": "\u2014",
+       "text": "ASK before adding a dependency \u2014 the vendor directory is reviewed."
+      }
+     ]
+    },
+    "unresolved-path": {
+     "severity": "M",
+     "note": "A rule names a path that does not exist here. Stale rule, or a path outside this checkout - confirm which before acting on the rule",
+     "hits": [
+      {
+       "line": 23,
+       "target": "internal/ledger/balance.go"
+      },
+      {
+       "line": 37,
+       "target": "docs/ledger-model.md"
+      },
+      {
+       "line": 38,
+       "target": "docs/webhooks.md"
+      },
+      {
+       "line": 43,
+       "target": "internal/api/contract_test.go"
+      }
+     ]
+    }
+   }
+  }
+ ],
+ "duplicates": [],
+ "conflicts": [],
+ "totals": {
+  "files": 1,
+  "bytes": 1453,
+  "lines": 44,
+  "tokens": 372,
+  "token_method": "ESTIMATE",
+  "directives": 5,
+  "anchors": 21,
+  "h_severity_findings": 0,
+  "high_budget_flags": 0,
+  "fast_path": true
+ }
+}

@@ -57,7 +57,9 @@ after_anchors  - before_anchors ->  empty, except paths the approved plan create
 
 An unexplained addition is a hallucination and fails the run. Losses go in `plan.json` under
 `released_anchors`, each with a reason in `released_reason` — that turns "it disappeared" into "we
-decided", which is the whole difference between compression and damage.
+decided", which is the whole difference between compression and damage. Do not type that list by
+hand: `python scripts/verify.py --work WORKDIR --after DRAFT --emit-plan WORKDIR/plan.json`
+scaffolds `released_anchors` from what a draft already dropped, leaving only the reasons to write.
 
 ## Layer 2: semantic probes
 

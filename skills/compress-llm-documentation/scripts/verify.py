@@ -24,8 +24,15 @@ Plan file (optional, JSON) authorises deliberate changes:
       "released_reason": {"`npm run legacy-build`": "removed 2025-08, proven stale"}
     }
 
+--emit-plan OUT.json skips the gate and instead scaffolds a plan: it diffs the anchors that
+are already lost between before/after (a draft compression already written to --after) and
+writes them into released_anchors with a placeholder reason, merging with --plan if one was
+given. Hand-copying every dropped command string into plan.json is busywork a script should
+do; the model's job is to supply the *reason*, not retype the anchor. Re-run without
+--emit-plan (pointing --plan at the same file) once the reasons are filled in for the real gate.
+
 Exit codes
-    0  PASS (possibly with warnings)
+    0  PASS (possibly with warnings), or --emit-plan / --idempotency completed
     1  FAIL -- at least one fidelity check failed
     2  usage error
 """
@@ -87,6 +94,46 @@ def load_plan(path):
     if not isinstance(data, dict):
         raise ValueError("plan must be a JSON object")
     return data
+
+
+def emit_plan(before, after, after_text, plan, out_path):
+    """Scaffold released_anchors from anchors already missing in a draft --after.
+
+    Only genuine losses need a reason: a string that survives as plain prose (de-emphasised,
+    not deleted) is left out, same rule check_anchors uses for anchor-de-emphasis. Anchors the
+    plan already covers keep their existing reason untouched -- this is safe to re-run as a
+    draft evolves.
+    """
+    released = set(plan.get("released_anchors") or [])
+    reasons = dict(plan.get("released_reason") or {})
+    added = []
+    for flat in sorted(before - after):
+        cls, val = M.anchor_class(flat), M.anchor_value(flat)
+        if val in released or flat in released:
+            continue
+        if M.normalise(val) and M.normalise(val) in after_text:
+            continue
+        released.add(val)
+        reasons.setdefault(val, "<GAP: state why this was released>")
+        added.append(val)
+
+    scaffold = {
+        "mode": plan.get("mode", "<GAP: safe|medium|max>"),
+        "new_files": plan.get("new_files", []),
+        "released_anchors": sorted(released),
+        "released_reason": reasons,
+    }
+    Path(out_path).write_text(json.dumps(scaffold, indent=1), encoding="utf-8")
+
+    if added:
+        print("plan scaffold: %d newly-lost anchor(s) added to %s with a GAP placeholder reason."
+              % (len(added), out_path))
+        print("Fill in released_reason for each real deletion, then run verify.py --plan %s "
+              "(without --emit-plan) for the actual gate." % out_path)
+    else:
+        print("plan scaffold: no new unapproved losses vs. the current draft -- %s already "
+              "covers this diff." % out_path)
+    return 0
 
 
 # --------------------------------------------------------------------------
@@ -438,6 +485,8 @@ def main(argv=None):
     ap.add_argument("--after", nargs="*", help="compressed files (default: the analysed paths)")
     ap.add_argument("--before", nargs="*", help="explicit originals, instead of --work")
     ap.add_argument("--plan", help="JSON file authorising deliberate changes")
+    ap.add_argument("--emit-plan", help="scaffold released_anchors from the current diff into "
+                    "this path instead of gating; fill in reasons and re-run for real")
     ap.add_argument("--repo-root", help="root for resolving relative links (default: cwd)")
     ap.add_argument("--json", dest="json_out", help="write the full result here")
     ap.add_argument("--idempotency", nargs=2, metavar=("FIRST", "SECOND"),
@@ -486,6 +535,9 @@ def main(argv=None):
 
     b_docs, b_anchors, b_dirs, b_text = load_side(before_paths, repo_root)
     a_docs, a_anchors, a_dirs, a_text = load_side(after_paths, repo_root)
+
+    if args.emit_plan:
+        return emit_plan(b_anchors, a_anchors, a_text, plan, args.emit_plan)
 
     res = Result()
     check_anchors(b_anchors, a_anchors, b_text, a_text, plan, res)

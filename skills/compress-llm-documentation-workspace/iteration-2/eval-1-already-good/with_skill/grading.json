@@ -1,0 +1,63 @@
+{
+ "eval": "eval-1-already-good",
+ "arm": "with_skill",
+ "expectations": [
+  {
+   "text": "Recognises the file is already compact and says so",
+   "passed": true,
+   "evidence": "matched: (?i)already (well|compact|good|tight|lean|concise)"
+  },
+  {
+   "text": "Did NOT gut a good file: keeps at least 70% of its lines",
+   "passed": true,
+   "evidence": "44 -> 44 lines (100% of source, floor 70%)"
+  },
+  {
+   "text": "int64 money invariant preserved",
+   "passed": true,
+   "evidence": "all 2 present"
+  },
+  {
+   "text": "Ledger immutability rule and its replay rationale preserved",
+   "passed": true,
+   "evidence": "all 2 present"
+  },
+  {
+   "text": "Redis no-TTL cache gotcha preserved",
+   "passed": true,
+   "evidence": "all 2 present"
+  },
+  {
+   "text": "Stripe sandbox amount gotcha preserved",
+   "passed": true,
+   "evidence": "all 2 present"
+  },
+  {
+   "text": "Both pitched references preserved",
+   "passed": true,
+   "evidence": "all 2 present"
+  },
+  {
+   "text": "All commands preserved verbatim",
+   "passed": true,
+   "evidence": "all 5 present"
+  },
+  {
+   "text": "All three hard boundaries preserved",
+   "passed": true,
+   "evidence": "all 3 present"
+  },
+  {
+   "text": "Completion criteria preserved",
+   "passed": true,
+   "evidence": "all 1 present"
+  },
+  {
+   "text": "No command was invented",
+   "passed": true,
+   "evidence": "no new commands"
+  }
+ ],
+ "passed": 11,
+ "total": 11
+}

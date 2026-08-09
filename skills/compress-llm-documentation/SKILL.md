@@ -76,16 +76,35 @@ decides whether stages 6's moves are legal at all. Stop if authority or scope is
 Gives baseline counts, the anchor set, a directive inventory, every mechanical detector, and byte
 copies in `WORKDIR/original/` for stage 8. Read the digest; the JSON has the detail.
 
+If the digest ends `FAST PATH` (zero H-severity findings, zero HIGH budget flags, zero
+conflicts — `totals.fast_path` in the JSON), skip stage 3's full ledger. Skim any M/L findings
+and duplicate candidates for a human-worthy call, then go straight to a short stage-9 report
+saying so. Building a 19-row ledger to conclude "change nothing" is exactly the waste this skill
+exists to cut in *other* files — do not repeat it on this one. This is a green light to move
+fast, not a promise the file is flawless; if something still looks off, treat it as a normal run.
+
 **3 — Classify.** Walk the file unit by unit — a unit is a rule, fact, example, rationale or
 pointer, never a line or a token window. Tag each: `KEEP-HOT` · `KEEP-SCOPED` · `KEEP-ON-DEMAND` ·
 `EXECUTE` (a script or hook does it) · `COMPRESS` · `DELETE` · `REVIEW`. Consult
 `references/preservation.md` for what may never be touched, and `references/rulebook.md` for the
 decision procedure and the four gates.
 
+Scale the ledger to what stage 2 found, not to a fixed shape. A 40-line file with 3 findings
+needs a short list of decisions with reasons, not 15 populated columns; a 400-line file with
+findings scattered across every section earns the full per-unit table, because that is where
+disputes and audits actually need the paper trail. The point of the ledger is traceability where
+stakes are real, not ceremony as proof of effort.
+
 **4 — Plan and get approval.** Report findings and intended moves *before* editing: what goes,
 why, and the evidence. Surface every conflict and gap. Write `WORKDIR/plan.json`
 (`{"mode","new_files","released_anchors","released_reason"}`) — stage 8 uses it to tell an
 authorised deletion from a silent one. Wait for approval unless the user already said "compress it".
+
+Do not hand-transcribe anchor strings into `plan.json`. Once a draft compression exists (even a
+scratch one, ahead of final approval), run
+`python scripts/verify.py --work WORKDIR --after DRAFT --emit-plan WORKDIR/plan.json` to
+pre-fill `released_anchors` from what the draft actually dropped — supply only the
+`released_reason` for each. Re-run it as the draft changes; it merges, it does not clobber.
 
 **5 — Delete proven waste.** Tier 1 only, each with recorded evidence. Re-run `analyze.py` on the
 result if the file changed a lot; isolating high-confidence savings keeps later judgement auditable.

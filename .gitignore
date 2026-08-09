@@ -144,3 +144,10 @@ vite.config.ts.timestamp-*
 .claude/skills/skill-creator/scripts/__pycache__/
 skills/compress-llm-documentation/scripts/__pycache__/
 skills/compress-llm-documentation-workspace/iteration-1/
+
+# Local-only discovery link: an NTFS junction to skills/compress-llm-documentation/ so
+# Claude Code auto-loads it from .claude/skills/. Not a real directory -- recreate with
+# `cmd /c mklink /J .claude\skills\compress-llm-documentation skills\compress-llm-documentation`
+# rather than committing it (junctions don't round-trip through git or other platforms).
+.claude/skills/compress-llm-documentation/
+.scratch/

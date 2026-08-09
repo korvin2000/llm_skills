@@ -23,6 +23,12 @@ against, so an incomplete ledger silently weakens every downstream guarantee.
 You do not need every field for every unit. Fill what the source states; absence is itself a
 finding (a rule with no verifier, a branch with no fallback).
 
+Depth scales with what `analyze.py` actually found, not with the size of this table. A short
+file with a handful of low-severity findings needs a decision list — unit, verdict, one-line
+why — not every row below populated. Reach for the full field set where the findings are dense,
+the modality mix is wide, or the file is contested enough that a later reviewer will need the
+paper trail. The ledger's job is traceable decisions, not maximum surface area.
+
 | Field | Preserve when present |
 |---|---|
 | `id` / `source` | stable local ID plus `file.md:line` provenance |

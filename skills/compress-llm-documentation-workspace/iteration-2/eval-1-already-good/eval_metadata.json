@@ -1,0 +1,18 @@
+{
+ "eval_id": 1,
+ "eval_name": "already-good",
+ "prompt": "I think our AGENTS.md is bloated - everyone keeps saying context files are too long. Compress it please. It's fixtures/already-good/AGENTS.md",
+ "assertions": [
+  "Recognises the file is already compact and says so",
+  "Did NOT gut a good file: keeps at least 70% of its lines",
+  "int64 money invariant preserved",
+  "Ledger immutability rule and its replay rationale preserved",
+  "Redis no-TTL cache gotcha preserved",
+  "Stripe sandbox amount gotcha preserved",
+  "Both pitched references preserved",
+  "All commands preserved verbatim",
+  "All three hard boundaries preserved",
+  "Completion criteria preserved",
+  "No command was invented"
+ ]
+}
