@@ -1,16 +1,21 @@
 # Evidence ledger
 
-Every citation in the corpus, with how many dossiers rely on it and whether it has been
-verified. **Nothing here is verified yet.** The dossiers are LLM-authored research notes;
-citation hallucination is a known failure mode and three ID conflicts are already visible
-without leaving the repo.
+Every arXiv citation in the corpus, with source count, resolution status, and claim-check
+boundary. The dossiers are LLM-authored research notes; a resolving identifier does not
+prove that the cited paper supports the attributed claim.
 
 Use this file before quoting a number outside this project, or when a claim looks too good.
+
+**Verification snapshot:** 2026-08-09. All 41 identifiers were opened on arXiv after the
+independent dossier analysis. Thirty-eight match the cited topic; three resolve to
+unrelated papers. Detailed result checks were concentrated on evidence that changes the
+compression rules.
 
 ## Contents
 
 - [Verification status](#verification-status)
-- [Known citation conflicts](#known-citation-conflicts)
+- [Resolution ledger](#resolution-ledger)
+- [Confirmed citation failures](#confirmed-citation-failures)
 - [Load-bearing citations](#load-bearing-citations)
 - [Single-source citations](#single-source-citations)
 - [Primary vendor documentation](#primary-vendor-documentation)
@@ -20,6 +25,23 @@ Use this file before quoting a number outside this project, or when a claim look
 ---
 
 ## Verification status
+
+| Status | Count | Meaning |
+|---|---:|---|
+| Resolved on arXiv | **41 / 41** | Identifier, title, authors, and abstract opened |
+| Topic attribution matches | **38 / 41** | Paper is the work the dossier meant to cite |
+| Confirmed wrong attribution | **3 / 41** | ID resolves, but to an unrelated paper |
+| Detailed claim check | selective | Methods/results checked for load-bearing or verdict-changing claims |
+| Cited by at least 3 dossiers | 4 | Convergence does not replace source verification |
+| Cited by exactly 1 source file | 32 | Includes one paper cited only by the prior-art survey |
+
+Publication months span 2023-04 through 2026-08. The recent papers are real; the observed
+failure mode was mostly attribution drift rather than invented identifiers.
+
+### Superseded pre-verification snapshot
+
+The table immediately below is retained to show the state that triggered the audit. Its
+counts and “unverified” status are historical, not current.
 
 | Status | Count | Meaning |
 |---|---:|---|
@@ -34,7 +56,73 @@ fabricated them. **Determining which is the first verification task.**
 
 ---
 
-## Known citation conflicts
+## Resolution ledger
+
+`MATCH` means the title/topic attribution is correct, not that every number quoted in a
+dossier was reproduced. `DETAILED` marks sources whose consequential methods/results were
+checked beyond the abstract. Source count includes `available_skills.md` where applicable.
+
+| ID | Cited work/topic | Sources | Status |
+|---|---|---:|---|
+| `2304.08467` | Gist Tokens | 1 | MATCH |
+| `2306.11644` | Textbooks Are All You Need | 1 | MATCH |
+| `2307.03172` | Lost in the Middle | 5 | MATCH |
+| `2309.04269` | Chain of Density | 1 | MATCH |
+| `2310.05736` | LLMLingua | 5 | MATCH |
+| `2310.06839` | LongLLMLingua | 2 | MATCH |
+| `2310.08560` | MemGPT | 1 | MATCH |
+| `2310.11324` | prompt-format sensitivity | 1 | MATCH |
+| `2310.11333` | cited as prompt-format sensitivity | 1 | **WRONG** |
+| `2312.00059` | cited as Prompt Cache | 1 | **WRONG** |
+| `2403.12968` | LLMLingua-2 | 2 | MATCH |
+| `2404.01077` | efficient prompting survey | 1 | MATCH |
+| `2404.11576` | cited as LongLLMLingua | 1 | **WRONG** |
+| `2411.10541` | prompt formatting impact | 1 | MATCH |
+| `2504.07952` | Dynamic Cheatsheet memory | 1 | MATCH |
+| `2505.18011` | pseudocode instruction training | 1 | MATCH |
+| `2507.11538` | IFScale | 1 | MATCH |
+| `2508.13666` | code-format token efficiency | 1 | MATCH |
+| `2510.04618` | Agentic Context Engineering | 1 | MATCH |
+| `2510.21413` | context files in open-source software | 1 | MATCH |
+| `2511.12884` | Agent READMEs | 1 | MATCH |
+| `2512.02246` | DETAIL Matters | 1 | MATCH |
+| `2601.07354` | symbolic instruction compression | 1 | MATCH |
+| `2601.20404` | AGENTS.md efficiency | 2 | DETAILED |
+| `2602.05447` | Structured Context | 2 | MATCH |
+| `2602.11988` | Evaluating AGENTS.md | 5 | DETAILED |
+| `2602.12670` | SkillsBench | 1 | MATCH |
+| `2603.29919` | SkillReducer | 1 | DETAILED |
+| `2604.02985` | prompt compression in the wild | 1 | MATCH |
+| `2604.17659` | Semantic Density Effect | 2 | MATCH |
+| `2605.04426` | Telegraph English | 3 | MATCH |
+| `2605.10870` | decision-centric agent memory | 1 | MATCH |
+| `2605.17304` | Context Codec Language | 1 | MATCH |
+| `2605.23296` | parallel context compaction | 1 | MATCH |
+| `2605.29676` | token-optimized agent notation | 1 | MATCH |
+| `2606.15828` | configuration smells | 1 | DETAILED |
+| `2606.19857` | BabelTele | 1 | MATCH |
+| `2606.23525` | self-compacting agents | 1 | MATCH |
+| `2607.08032` | rate-distortion memory survey | 1 | MATCH |
+| `2607.19257` | prompt design at scale | 1 | MATCH |
+| `2608.01326` | Context Compaction Theory | 1 | MATCH |
+
+---
+
+## Confirmed citation failures
+
+All three bad IDs resolve successfully, which is why existence-only checking is
+insufficient.
+
+| Bad ID | Actual paper | Intended source | Consequence |
+|---|---|---|---|
+| `2310.11333` | strawberry orientation for robotic picking | Sclar et al. is `2310.11324` | m3’s format-sensitivity citation is invalid |
+| `2312.00059` | photo-induced charge in a semiconductor ion trap | Prompt Cache is `2311.04934` | m3’s cache citation is invalid |
+| `2404.11576` | state-space decomposition for video prediction | LongLLMLingua is `2310.06839` | hy3’s query-aware compression citation is invalid |
+
+### Original pre-verification observations
+
+Retained below to show how the conflicts were detected before browsing. The verdicts
+above supersede the hypotheses.
 
 Same paper, different ID. At most one of each pair is right.
 

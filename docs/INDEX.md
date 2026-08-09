@@ -33,25 +33,25 @@ Written by this project. These supersede the raw dossiers for day-to-day work.
 
 | Question | Go to |
 |---|---|
-| What does the empirical evidence actually say? | `claude.md` §1, `kimi.md` §1, `qwen.md` §1 |
-| How do I detect a bad context file mechanically? | `claude.md` §1.2 (6 smells) + Appendix A (ripgrep recipes) |
+| What does the empirical evidence actually say? | `claude-opus.md` §1, `kimi.md` §1, `qwen.md` §1 |
+| How do I detect a bad context file mechanically? | `claude-opus.md` §1.2 (6 smells) + Appendix A (ripgrep recipes) |
 | What is the formal objective being optimized? | `codex.md` §1, `hy3.md` §0 (rate–distortion), `mimo.md` §1 |
 | How do I decide hot / warm / cold placement? | `codex.md` §3 + §20 (expected token residency) |
-| What are the concrete rewrite transformations? | `claude.md` §6 (T1–T20), `codex.md` §10 (R1–R10), `nvidia.md` §2 |
+| What are the concrete rewrite transformations? | `claude-opus.md` §6 (T1–T20), `codex.md` §10 (R1–R10), `nvidia.md` §2 |
 | Deterministic, regex-safe cleanup rules? | `ds_pro.md` §II, `glm52.md` §4.1, `nvidia.md` §2 (tier 1) |
-| How do I verify I didn't break anything? | `claude.md` §9, `codex.md` §21+§32, `nvidia.md` §9 |
-| What are the budgets and hard limits? | `claude.md` §10, `kimi.md` §5.2, `qwen.md` §1 |
+| How do I verify I didn't break anything? | `claude-opus.md` §9, `codex.md` §21+§32, `nvidia.md` §9 |
+| What are the budgets and hard limits? | `claude-opus.md` §10, `kimi.md` §5.2, `qwen.md` §1 |
 | Symbolic / Telegraph-English notation — the pro case | `ds_pro.md` §V.1, `glm52.md` §5.3, `gemini.md` §3.3 |
-| Symbolic notation — the con case | `claude.md` §7–8.2, `codex.md` §27, `qwen.md` §5 |
+| Symbolic notation — the con case | `claude-opus.md` §7–8.2, `codex.md` §27, `qwen.md` §5 |
 | Memory-file specific compaction | `codex.md` §6+§25, `qwen.md` §8, `gemini.md` §4, `grok.md` §5H–I |
 | `SKILL.md` authoring and progressive disclosure | `ds_flash.md` §5, `qwen.md` §9, `fable.md` §5 |
 | Format benchmarks (MD / YAML / JSON / TOON / CSV) | `kimi.md` §4.1, `qwen.md` §6, `glm52.md` §2.2 |
 | Tokenizer mechanics and per-format token costs | `qwen.md` §2, `hy3.md` §1, `ds_flash.md` §3 |
-| Prompt-cache interaction | `claude.md` §4.6, `hy3.md` §4.2, `m3.md` §4.2, `kimi.md` §7.10 |
+| Prompt-cache interaction | `claude-opus.md` §4.6, `hy3.md` §4.2, `m3.md` §4.2, `kimi.md` §7.10 |
 | What already exists that I could fork? | `available_skills.md` (whole file) |
-| Skill directory layout proposals | `claude.md` §12.1, `codex.md` §35, `spark1.md` §9 |
-| Ready-to-adapt `SKILL.md` drafts | `claude.md` §12.2, `codex.md` §36, `kimi.md` §8, `qwen.md` §11 |
-| Worked before/after examples | `claude.md` §13, `gemini.md` §7, `nvidia.md` §2, `glm52.md` §8 |
+| Skill directory layout proposals | `claude-opus.md` §12.1, `codex.md` §35, `spark1.md` §9 |
+| Ready-to-adapt `SKILL.md` drafts | `claude-opus.md` §12.2, `codex.md` §36, `kimi.md` §8, `qwen.md` §11 |
+| Worked before/after examples | `claude-opus.md` §13, `gemini.md` §7, `nvidia.md` §2, `glm52.md` §8 |
 | Raw source links for further research | `reasearch_links.md` |
 
 ---
@@ -65,7 +65,7 @@ judged after reading all 17 files. It is not a judgement of the authoring model.
 
 | File | Tokens | Distinctive contribution |
 |---|---:|---|
-| `claude.md` | ~14.6K | The most complete field manual. Only source for: the 6 configuration smells as a detector set, the amnesia probe, the removal ledger, docs-as-tests, generational-loss/idempotency, per-section compression budgets, and ~30 ripgrep detection recipes in Appendix A. Opinionated with explicit **Verdict:** markers |
+| `claude-opus.md` | ~14.6K | The most complete field manual. Only source for: the 6 configuration smells as a detector set, the amnesia probe, the removal ledger, docs-as-tests, generational-loss/idempotency, per-section compression budgets, and ~30 ripgrep detection recipes in Appendix A. Opinionated with explicit **Verdict:** markers |
 | `codex.md` | ~12.7K | The most rigorous framing. Only source for: expected token residency, instruction ablation, co-access-graph partitioning, semantic checksums, eager-import vs lazy-link warning, and a 5-level implementation roadmap (v0→v4) |
 | `kimi.md` | ~5.5K | Best evidence-per-token. Uniquely reconciles the two contradictory headline studies, best format-selection matrix, tokenizer-aware writing rules, the "compressor must not invent" invariant |
 | `qwen.md` | ~4.7K | Best calibrated numbers. Quantifies the 80/15/5 split, debunks the CJK-density myth, warns that custom grammar is measured net-negative, strongest memory-file section |
@@ -114,11 +114,6 @@ One file per authoring model: `claude`, `codex`, `gemini`, `grok`, `kimi`, `qwen
 `glm52` (GLM-5.2), `hy3` (Hunyuan 3), `m3` (Minimax M3). Two files are not dossiers:
 `available_skills.md` (prior art) and `reasearch_links.md` (raw links).
 
-> **Known issue:** `docs/claude.md` collides with the `CLAUDE.md` filename on
-> case-insensitive filesystems, so Claude Code auto-loads all ~14.6K tokens of it into
-> every session started in `docs/`. Rename to `docs/claude-opus.md` to stop the leak.
-> Tracked in the root [CLAUDE.md](../CLAUDE.md).
-
 ---
 
 ## Search recipes
@@ -127,7 +122,7 @@ Cheaper than opening files.
 
 ```bash
 rg -l -i "progressive disclosure" docs/          # which dossiers cover a concept
-rg -n -i "verdict:" docs/claude.md               # opinionated positions only
+rg -n -i "verdict:" docs/claude-opus.md               # opinionated positions only
 rg -n -o 'arxiv\.org/\S+' docs/ | sort -u        # every citation
 rg -n -i "never|must not" docs/SYNTHESIS.md      # the hard constraints
 rg -n '^#{2,3} ' docs/codex.md                   # section list without reading the file

@@ -8,6 +8,11 @@ source lists before consulting `INDEX.md`, `EVIDENCE.md`, or `SYNTHESIS.md`.
 **Evidence cutoff:** 2026-08-09. Platform behavior can change; re-check official
 documentation before encoding it in a skill.
 
+**Revision note:** this revision independently re-read the local corpus and used no new
+web research. The prior verification snapshot recorded in `EVIDENCE.md` was consulted
+only during the second-phase cross-check and is carried forward as a dated repository
+artifact, not presented as a fresh verification.
+
 ## Contents
 
 1. [Executive verdict](#1-executive-verdict)
@@ -80,11 +85,11 @@ The analysis used this order:
    unvetted lead queue.
 4. Normalize repeated wording into distinct technique families. “Use tables,” “replace
    prose with matrices,” and “table-over-paragraph” are one family, not three votes.
-5. Check load-bearing research claims against primary papers or official platform
-   documentation.
-6. Produce the independent conclusions in ``1-15.
-7. Only then inspect `INDEX.md`, `EVIDENCE.md`, and `SYNTHESIS.md` and record the
-   comparison in `16.
+5. Rank the local recommendations without treating repeated citations or confident
+   numbers as verified evidence.
+6. Freeze the independent conclusions in §§1–15.
+7. Only then inspect `INDEX.md`, `EVIDENCE.md`, and `SYNTHESIS.md`, including their
+   recorded evidence-verification snapshot, and record the comparison in §16.
 
 This prevents agreement with an earlier synthesis from being mistaken for independent
 convergence.
@@ -124,6 +129,16 @@ compressor:
 **Portability (P)** is high, medium, or low across models and harnesses. A technique can be
 effective on one platform and still have low portability.
 
+Translate risk into action:
+
+| Risk | Default handling |
+|---|---|
+| **R0** | May automate after syntax/render checks |
+| **R1** | May automate with ledger and exact-anchor validation |
+| **R2** | Require semantic review; keep the diff reversible |
+| **R3** | Require explicit authorization plus target-specific evaluation |
+| **R4** | Reject as an automatic transformation |
+
 ### 2.4 Decision labels
 
 - **P0 — prerequisite:** protects correctness; run before compression.
@@ -135,14 +150,38 @@ effective on one platform and still have low portability.
 The labels are not averages. A high-risk technique does not become safe because many
 dossiers repeat it.
 
+### 2.5 Transfer test for any recommendation
+
+Before promoting a dossier claim into a rule, answer all six questions:
+
+1. **Same artifact?** Prompt/RAG compression, session compaction, code minification, and
+   durable governance files do not share one preservation contract.
+2. **Same task?** Retrieval QA, classification, code completion, and autonomous editing
+   expose different failure modes.
+3. **Same target?** Model family, tokenizer, reasoning mode, tool surface, and multimodal
+   support can change the result.
+4. **Same harness?** Loading, imports, scope, precedence, comments, and reference
+   discovery must match.
+5. **Same metric?** Input-token reduction is not evidence of adherence, task success,
+   latency, or lower total trajectory cost.
+6. **Same loss tolerance?** A small average score change can still hide one catastrophic
+   permission, safety, or interface failure.
+
+If any answer is no or unknown, downgrade the claim to conditional or experimental and
+state what local evidence would promote it. This transfer test is the main defense
+against importing impressive but irrelevant prompt-compression results into durable
+instruction files (`codex.md` §§12–18, 27–28; `qwen.md` §6).
+
 ## 3. The optimization target
 
 ### 3.1 Objective
 
-For sections `i` with load probability `p_i`, token cost `t_i`, retrieval cost `r_i`,
-and expected rework from omission `w_i`:
+For semantic unit `i`, let `q_i` be the probability it is needed, `l_i` the probability
+it is successfully available when needed, `p_i` the probability it is loaded, `t_i` its
+loaded-token cost, `r_i` its retrieval/reasoning cost, `d_i` the expected damage or rework
+when it is unavailable or ambiguous, and `m_i` its maintenance/drift cost:
 
-`ExpectedCost = sum_i p_i * (t_i + r_i + w_i)`
+`ExpectedCost = sum_i [p_i*t_i + q_i*l_i*r_i + q_i*(1-l_i)*d_i + m_i]`
 
 Minimize that cost **subject to**:
 
@@ -152,10 +191,14 @@ Minimize that cost **subject to**:
 - sufficient discoverability for conditional material;
 - acceptable human maintenance and auditability.
 
+Architectural compression is beneficial only when saved residency exceeds added
+retrieval, miss, ambiguity, and maintenance cost. A shorter root file that makes a rare
+but catastrophic rule undiscoverable is more expensive under this objective.
+
 This model comes from the corpus’s strongest conceptual work on expected residency,
-discoverability tax, and semantic checksums (`codex.md `20-22`), reinforced by
+discoverability tax, and semantic checksums (`codex.md` §§20–22), reinforced by
 tokens-per-task reasoning in the context-compression prior art
-(`available_skills.md `2-3`). It also corrects the common error of optimizing only
+(`available_skills.md` §§2–3). It also corrects the common error of optimizing only
 bytes, one request, or one model response.
 
 ### 3.2 Five distinct operations
@@ -171,7 +214,22 @@ bytes, one request, or one model response.
 Calling the last four “lossless” hides the actual decisions. A transformation is safe
 only relative to a declared preservation contract and target harness.
 
-### 3.3 What is out of scope by default
+### 3.3 Four independent loss channels
+
+Assess transformations against four channels rather than one generic “semantic loss”:
+
+| Loss channel | Typical cause | Required defense |
+|---|---|---|
+| **Content loss** | Deleting or weakening an atom | Ledger and exact-anchor comparison |
+| **Availability loss** | Moving content behind a missed trigger or inaccessible path | Route/load probe and fallback |
+| **Representation loss** | Table, pseudocode, schema, or shorthand drops relationships | Round-trip semantic and boundary cases |
+| **Lifecycle loss** | Canonical/derived copies drift or repeated compaction erodes meaning | Authority graph, idempotency, and source regeneration |
+
+A move can be textually lossless yet fail through availability; a rewrite can retain all
+identifiers yet change their conditions. Validation must cover all four channels
+(`codex.md` §§8, 17, 21, 25; `claude-opus.md` §§8.8–8.9).
+
+### 3.4 What is out of scope by default
 
 This foundation concerns durable, LLM-facing Markdown: `AGENTS.md`, `CLAUDE.md`,
 `SKILL.md`, memory, rules, and their references.
@@ -194,12 +252,15 @@ Before rewriting, extract every operational unit into a ledger. One row should r
 
 | Field | Preserve when present |
 |---|---|
-| **ID and source** | Stable local ID plus `file.md `section` provenance |
+| **ID and source** | Stable local ID plus `file.md` §section provenance |
+| **Authority and provenance** | Canonical/derived status, owner or issuer, source priority, and whether the unit is user-stated, tool-observed, source-derived, or inferred |
 | **Type** | instruction, fact, decision, definition, example, rationale, warning, pointer |
 | **Actor and scope** | who acts; repository, path, task, file type, platform, or lifecycle scope |
+| **Audience and load route** | which agent/human consumes it; how and when the target harness makes it available |
 | **Trigger** | the condition or event that activates the unit |
 | **Modality** | MUST, MUST NOT, SHOULD, MAY, default, preference, or observation |
 | **Action and object** | exact required or prohibited behavior |
+| **Permission and side effect** | actions allowed, approval-gated, destructive, external, or read-only |
 | **Exceptions** | cases where the main rule does not apply |
 | **Precedence** | which rule wins when scopes overlap |
 | **Default and fallback** | what happens when no branch matches or a step fails |
@@ -207,11 +268,11 @@ Before rewriting, extract every operational unit into a ledger. One row should r
 | **Verification and stop** | completion signal, check, escalation, or abort condition |
 | **Exact anchors** | commands, flags, paths, globs, identifiers, keys, versions, numbers, units, URLs, error text, schemas |
 | **Rationale** | why the rule exists when that knowledge prevents unsafe generalization |
-| **Status** | current, superseded, disputed, uncertain, or externally enforced |
+| **Status and confidence** | current, superseded, disputed, uncertain, or externally enforced; evidence supporting that status |
 
 This is a concrete synthesis of invariant sets and protected facts
-(`claude-opus.md `2.4`; `glm52.md `9`), the semantic IR
-(`codex.md `8`), and fact inventories (`kimi.md `6`).
+(`claude-opus.md` §2.4; `glm52.md` §9), the semantic IR
+(`codex.md` §8), and fact inventories (`kimi.md` §6).
 
 ### 4.2 Protected atoms
 
@@ -243,7 +304,7 @@ It is semantic when it reveals:
 
 This corrects the corpus’s recurring “examples are removable payload” claim. SkillReducer
 found that relocating examples was a recurring source of regressions; diverse canonical
-examples remain valuable (`claude-opus.md `6 T15`; `fable.md `4`; `kimi.md `3.2`).
+examples remain valuable (`claude-opus.md` §6 T15; `fable.md` §4; `kimi.md` §3.2).
 
 ### 4.4 Rationale is conditional, not decorative
 
@@ -258,7 +319,7 @@ Keep rationale when it:
 - records why an apparently simpler alternative was rejected.
 
 The safe form is usually `Rule — because consequence`, not a historical essay
-(`claude-opus.md `5.3`; `glm52.md `12.5`).
+(`claude-opus.md` §5.3; `glm52.md` §12.5).
 
 ### 4.5 Conflicts and gaps
 
@@ -284,7 +345,7 @@ defaults; the target artifact and harness can change them.
 |---|---|---:|---:|---|---|---|
 | P0.1 | Identify artifact type, intended readers, target models, harness, load semantics, and authority before editing | 4 | 0 | A | H | Mandatory; architecture is otherwise guesswork |
 | P0.2 | Inventory every source and determine canonical vs generated vs historical status | 4 | 0 | B | H | Mandatory source graph |
-| P0.3 | Build the semantic ledger in `4.1 before deleting or paraphrasing | 4 | 1 | B | H | Core correctness mechanism |
+| P0.3 | Build the semantic ledger in §4.1 before deleting or paraphrasing | 4 | 1 | B | H | Core correctness mechanism |
 | P0.4 | Extract exact anchors separately and compare them after transformation | 4 | 0 | B | H | Mechanically catches many silent losses |
 | P0.5 | Detect conflicts, overlapping scopes, stale copies, and precedence gaps | 4 | 0 | B | H | Never auto-resolve uncertain authority |
 | P0.6 | Separate facts, instructions, examples, rationale, pointers, and enforcement | 3 | 0 | B | H | Prevents format-blind deletion |
@@ -390,6 +451,33 @@ defaults; the target artifact and harness can change them.
 | X14 | Use lexical similarity or one LLM judge as proof of preservation | 0 | 4 | Misses rare but decisive constraints and shared blind spots |
 | X15 | Create unrequested `removed.md`, `notes.md`, or `original.md` sidecars in runtime scope | 0 | 3 | Adds clutter and may itself be loaded; VCS is usually safer |
 
+### 5.6 Unit-level decision procedure
+
+Apply this procedure to each semantic unit, not to arbitrary lines or token windows:
+
+~~~text
+if authority, scope, or conflict is unresolved:
+    REVIEW; preserve both source statements; do not rewrite the winner
+elif unit is a protected atom or unknowable high-cost gotcha:
+    KEEP in the earliest guaranteed context; compress wording only if semantics revalidate
+elif unit is an exact semantic duplicate:
+    select canonical home; keep a route or local qualifier only where availability needs it
+elif unit appears tool-enforced:
+    run the enforcement-equivalence gate; then keep invocation/gate or preserve the rule
+elif unit is needed only under a recognizable condition:
+    run the relocation-safety gate; KEEP-SCOPED/ON-DEMAND only if every check passes
+elif unit is generic, discoverable, stale, or low-value:
+    prove with source inspection or ablation; DELETE only with evidence
+elif its information shape matches a safe representation:
+    transform with the representation-fidelity gate
+else:
+    keep and apply low-risk lexical compression
+~~~
+
+This procedure deliberately has no “target ratio reached” branch. Classification and
+preservation decide; file length does not (`codex.md` §§29, 39;
+`claude-opus.md` §§5.1, 11).
+
 ## 6. Safe transformation patterns
 
 Apply transformations in this order:
@@ -398,7 +486,7 @@ Apply transformations in this order:
 > matching structures -> micro-optimize
 
 Later stages have smaller expected gains and higher semantic risk
-(`qwen.md `4`; `fable.md `4`; `codex.md `39`).
+(`qwen.md` §4; `fable.md` §4; `codex.md` §39).
 
 ### 6.1 Prose to directive
 
@@ -461,7 +549,7 @@ Use a table only if all rows answer the same questions. For example:
 
 Keep prose when rows need qualifications, sequence, nested exceptions, or long code.
 Markdown table punctuation can cost more tokens than a short list
-(`codex.md `16`; `qwen.md `6`).
+(`codex.md` §16; `qwen.md` §6).
 
 ### 6.5 When pseudocode is better
 
@@ -481,7 +569,7 @@ else:
 It is unsafe if it omits actor, exceptions, transaction boundaries, concurrency,
 fallbacks, or errors. The cited pseudocode paper studies **training-time fine-tuning**,
 not automatic rewriting of durable instructions for stock models
-(`claude-opus.md `6 T4`; `ds_pro.md `V.5`).
+(`claude-opus.md` §6 T4; `ds_pro.md` §V.5).
 
 ### 6.6 When formal notation is better
 
@@ -527,7 +615,7 @@ Keep the prohibition when the unsafe action is likely or costly:
 
 The corpus’s universal “positive beats negative” and “pink elephant” claims are not
 supported strongly enough to erase explicit safety boundaries
-(`ds_pro.md `VI`; `glm52.md `12.3`; `qwen.md `5`).
+(`ds_pro.md` §VI; `glm52.md` §12.3; `qwen.md` §5).
 
 ### 6.9 Exact anchors
 
@@ -561,6 +649,86 @@ Claude Code currently strips block-level HTML comments from injected `CLAUDE.md`
 content, but that is a platform-specific optimization, not a general Markdown property.
 Direct file reads still expose those comments.
 
+### 6.11 Four gates before semantic savings
+
+#### Enforcement-equivalence gate
+
+Do not delete a written rule merely because a tool mentions the same topic. Confirm:
+
+- the tool covers the same scope, modality, conditions, exceptions, and values;
+- it runs automatically or the agent is guaranteed to invoke it before the risky action;
+- failure blocks or clearly reports the violation rather than emitting an ignorable warning;
+- its output tells the agent how to recover without losing the original boundary;
+- the written rationale is not needed to avoid the action before a late check fails;
+- the tool/config is canonical, available in the target environment, and not itself stale.
+
+If any check fails, keep a compact preventive rule. If all pass, retain the invocation,
+timing, failure contract, and any decision-changing rationale; remove only duplicated
+enforcement detail (`claude-opus.md` §§4.3, 5.1; `codex.md` §11).
+
+#### Relocation-safety gate
+
+Before moving hot content to a scoped file, skill, reference, asset, or script, confirm:
+
+- the need is recognizable **before** the agent can make the relevant mistake;
+- a route is present in context guaranteed to load and states what/when;
+- the harness actually supports the intended conditional or on-demand behavior;
+- the target is accessible under sandbox, offline, path, and network constraints;
+- the retrieved unit is self-contained enough to apply correctly;
+- retrieval plus miss/rework cost is lower than residency cost for the workload;
+- a safe fallback exists when loading or activation fails.
+
+If any check fails for a high-impact unit, keep it hot or duplicate only the minimum
+non-drifting gate needed for safety. Relocation without availability proof is deletion
+(`codex.md` §§17–20; `fable.md` §5).
+
+#### Deduplication-equivalence gate
+
+Two passages are duplicates only if they match on:
+
+- authority and lifecycle status;
+- actor, audience, and scope;
+- trigger, modality, action, and object;
+- conditions, exceptions, precedence, defaults, and fallbacks;
+- exact anchors and verification/stop semantics.
+
+Textual similarity is only a candidate detector. If one copy adds a local exception,
+compatibility alias, route, or stronger authority, merge the shared payload while
+preserving that delta. Never let majority wording override a higher-authority source
+(`codex.md` §4; `claude-opus.md` §8.11).
+
+#### Representation-fidelity gate
+
+Before converting prose to a table, pseudocode, grammar, schema, formula, diagram, or
+compact serializer, confirm:
+
+- the target form naturally represents the original relationship shape;
+- every ledger field has an unambiguous location in the new form;
+- ordering, overlap, precedence, defaults, exceptions, and failure paths remain explicit;
+- exact anchors stay exact and runnable/copyable material remains usable;
+- target models and the harness can parse or render the form without a hidden prompt tax;
+- the end-to-end result improves expected cost or behavior, not just source token count.
+
+If the form requires a private legend, loses qualifications, or saves tokens only after
+excluding its decoder/retry cost, keep familiar Markdown or prose
+(`codex.md` §§12–13, 16; `qwen.md` §6).
+
+### 6.12 Stop conditions for compression
+
+Stop and preserve the current candidate when:
+
+- remaining savings require R3/P3 transformations without explicit authorization and
+  target-specific evaluation;
+- a semantic, availability, representation, or lifecycle check fails;
+- canonical authority or harness loading cannot be established;
+- marginal residency savings are smaller than added retrieval, rework, or drift risk;
+- another pass changes a stable result or removes a previously preserved distinction;
+- all remaining content has a traced operational role.
+
+“No worthwhile safe compression remains” is a successful outcome. Do not manufacture a
+smaller diff to satisfy a requested percentage (`codex.md` §§27–29;
+`claude-opus.md` §§8.5, 8.8).
+
 ## 7. Artifact and harness profiles
 
 Compression policy must be selected by artifact role. Applying one Markdown minifier to
@@ -592,7 +760,7 @@ A compact root file should answer:
 7. What proves the task is complete?
 
 Do not turn it into a repository tour, dependency dump, style-linter manual, or catalog
-of generic engineering advice (`codex.md `4, `38`; `claude-opus.md `4-5`).
+of generic engineering advice (`codex.md` §§4, 38; `claude-opus.md` §§4–5).
 
 ### 7.3 Current Codex semantics
 
@@ -671,7 +839,7 @@ Memory should preserve decision-relevant state, not transcript chronology:
 Preserve which facts came from users, tools, source files, or inference. Do not promote a
 one-off observation into permanent policy. Repeated compaction must merge by decision and
 artifact identity, not re-summarize the entire previous summary
-(`codex.md `6, `25-26`; `mimo.md `1-3`).
+(`codex.md` §§6, 25–26; `mimo.md` §§1–3).
 
 ### 7.7 Long references and web documentation
 
@@ -736,17 +904,19 @@ ratios if labelled consistently.
 
 ### Stage 2 — build the semantic ledger
 
-Extract `4.1` fields. Add literal inventories and map every example to the rules it
+Extract §4.1 fields. Add literal inventories and map every example to the rules it
 covers. Give disputed or uncertain atoms an explicit status. The ledger is the semantic
-checksum used later (`codex.md `8, `21`).
+checksum used later (`codex.md` §§8, 21).
 
 ### Stage 3 — build authority and behavior graphs
 
-Create two conceptual graphs:
+Create three conceptual graphs:
 
 - **authority graph:** duplicate claims, imports, scopes, overrides, generated copies,
   and canonical sources;
 - **behavior graph:** trigger -> rule -> action -> verifier -> failure/stop.
+- **availability/lifecycle graph:** guaranteed context -> route -> conditional artifact ->
+  fallback, plus canonical source -> generated/derived views -> drift check.
 
 Flag conflicts, blind pointers, missing fallbacks, and rules that have no operational
 effect.
@@ -769,6 +939,8 @@ The classifier must cite the source section and reason for any DELETE or REVIEW 
 
 Apply only P1.1-P1.4 and safe normalization first. Re-run exact-anchor and ledger
 coverage checks. This isolates high-confidence savings and keeps later judgment auditable.
+Use the deduplication- and enforcement-equivalence gates in §6.11; neither semantic
+similarity nor the mere existence of a linter proves deletability.
 
 ### Stage 6 — relocate conditional material
 
@@ -776,7 +948,8 @@ Choose a verified mechanism: nested instruction, path rule, skill, reference, as
 script, schema, or generated view. Add a what/when route at the consumer. Measure
 **expected loaded cost**, including activation and retrieval.
 
-If the target cannot reliably retrieve it, relocation is deletion in disguise.
+Run the relocation-safety gate in §6.11. If the target cannot reliably retrieve it,
+relocation is deletion in disguise.
 
 ### Stage 7 — rewrite preserved semantics
 
@@ -785,17 +958,17 @@ closed lists, stop conditions, and example curation. Preserve literals separatel
 
 Rewrite one semantic unit at a time. Do not repeatedly recompress already compressed
 text without the original and ledger; that creates generational loss
-(`claude-opus.md `8.8`).
+(`claude-opus.md` §8.8).
 
 ### Stage 8 — select matching representations
 
 Use tables, pseudocode, grammars, schemas, signatures, formulas, or diagrams only after
-the suitability tests in `6. Test unfamiliar formats against plain Markdown. Never
+the suitability tests in §6. Test unfamiliar formats against plain Markdown. Never
 formalize merely to hit a token target.
 
 ### Stage 9 — validate
 
-Run the checks in `9. Any lost hard constraint, exact anchor, condition, exception,
+Run the checks in §9. Any lost hard constraint, exact anchor, condition, exception,
 precedence edge, or behavior is a failure, regardless of token savings.
 
 ### Stage 10 — report and gate
@@ -813,6 +986,9 @@ Report:
 Require human approval before resolving disputed authority, deleting high-risk semantic
 content, or adopting an experimental representation unless the user already authorized
 that class of change.
+
+Apply §6.12 after every stage. Stop when only unsafe marginal savings remain; a valid
+report may recommend no further changes.
 
 ### Compression modes
 
@@ -905,7 +1081,7 @@ prompt reduces but does not remove correlated failure.
 
 Run the compressor twice. A stable result should converge. Continued shrinkage usually
 signals generational loss, unstable classification, or ratio chasing
-(`claude-opus.md `9.4`; `qwen.md `4`).
+(`claude-opus.md` §9.4; `qwen.md` §4).
 
 ### 9.6 Fail and rollback conditions
 
@@ -920,10 +1096,26 @@ Fail the candidate if any of these occur:
 - task-success or safety regression beyond the predeclared tolerance;
 - savings depend on hiding the original without a recovery path.
 
+### 9.7 Validation coverage matrix
+
+No single check covers every loss channel. The minimum matrix is:
+
+| What can fail | Primary check | Corroborating check |
+|---|---|---|
+| Exact literal or interface | anchor/schema diff | source-linked spot check |
+| Modality, scope, condition, exception, precedence | ledger/graph comparison | semantic probes |
+| Routing and availability | harness load/activation trace | task prompt locates reference |
+| Representation fidelity | boundary-case round trip | original/candidate reviewer diff |
+| Behavioral utility and safety | fresh-session A/B/C tasks | rule-violation and tool-trace analysis |
+| Lifecycle/canonicality | second-run idempotency + drift check | regenerate from canonical source |
+
+For every ledger field, record at least one validation method or state that it remains
+untested. A green token report cannot compensate for an untested high-impact field.
+
 ## 10. Smells and detectors
 
 The first six names come from the configuration-smell study discussed in
-`claude-opus.md `1.2`. That study establishes that the smells occur; it does not prove a
+`claude-opus.md` §1.2. That study establishes that the smells occur; it does not prove a
 universal performance penalty or a magic file-size threshold.
 
 | Smell | Detection lead | Safe response |
@@ -951,9 +1143,11 @@ automatically simply because a regex matched words such as “note,” “overvi
 
 ## 11. Evidence assessment
 
-All numbers below were checked against the linked primary source for this independent
-phase. They are study-specific observations, not universal targets. The corpus’s
-unverified point estimates are not repeated as general facts.
+This section carries forward the repository’s dated 2026-08-09 verification snapshot,
+which was consulted only after the independent dossier conclusions were frozen. This
+revision did not repeat the web checks. The results below are study-specific observations,
+not current platform guarantees or universal targets; unverified dossier point estimates
+are not repeated as general facts.
 
 ### 11.1 Directly relevant evidence
 
@@ -1023,7 +1217,7 @@ not automatically good for instructions.
 | [Anthropic context engineering](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) | Smallest high-signal set, just-in-time retrieval, canonical examples, compaction, and retrieval-cost tradeoff | Official practice guidance, not a controlled Markdown trial | B |
 | [Cloudflare AI consumability](https://developers.cloudflare.com/style-guide/how-we-docs/ai-consumability/) | Real HTML-to-Markdown pipeline and a page-level token comparison | Web conversion, not intrinsic Markdown compression | B |
 | [GitHub’s review of 2,500+ agent files](https://github.blog/ai-and-ml/github-copilot/how-to-write-a-great-agents-md-lessons-from-over-2500-repositories/) | Useful descriptive patterns for role, commands, layout, and boundaries | Repository survey/blog; does not establish causal performance | C |
-| `available_skills.md `1-5` prior art | Useful implementation ideas, especially tokens-per-task, structured summaries, and honest workload-specific measurement | Self-reported benchmarks, popularity drift, and uneven provenance | C-D |
+| `available_skills.md` §§1–5 prior art | Useful implementation ideas, especially tokens-per-task, structured summaries, and honest workload-specific measurement | Self-reported benchmarks, popularity drift, and uneven provenance | C-D |
 
 ### 11.6 Claims not accepted
 
@@ -1050,22 +1244,22 @@ not counted by repetition.
 
 | Source | Best contribution | Main correction or rejection |
 |---|---|---|
-| `claude-opus.md `1-12` | Concrete smell taxonomy, block classification, pitched links, conflict graph, checks, and a complete pipeline | Several “delete-on-sight” rules are role-blind; tail duplication and arbitrary budgets are weak. Its `13` worked example is **not compression**: it invents `pytest tests/unit -q`, a Docker command, a four-minute duration, and `api/` / `db/` gates absent from the source |
-| `codex.md `8, `19-22, `29-40` | Strongest conceptual treatment: semantic IR, ablation, expected residency, semantic checksum, discoverability tax, behavior-aware metrics | Some weights, ratios, and stage budgets are illustrative heuristics. “Discoverable” information still needs retrieval-cost and ambiguity tests |
-| `ds_flash.md `2-7` | Correct priority on representation, delete/relocate/rewrite order, progressive disclosure, and abbreviation caution | Calls destructive operations lossless; proposes unsupported metadata and fragile line-number routing |
-| `ds_pro.md `II-VI` | Useful staged audit and explicit must-preserve list | Its lossless catalog includes semantic deletions; Telegraph English, dictionary backreferences, and toolchain-first absolutism are unsafe defaults |
-| `fable.md `3-8` | Clear compression ladder, tiered skill architecture, and executable-validation emphasis | Treats comments/frontmatter as broadly disposable and scripts as zero-token; several numerical claims are unsupported |
-| `gemini.md `2-7` | Emphasizes progressive disclosure, verification, and operational structure | Universal table conversion, predicate-logic shorthand, a verifier for every rule, memory purging, and “slot capacity” thresholds would add ambiguity or invented process |
-| `glm52.md `4-12` | Protected-facts pattern, faithfulness guard, hybrid-source idea, and measurable forms | Position-aware truncation, sandwich duplication, comment/frontmatter stripping, emoji, and hard SDE targets are not safe |
-| `grok.md `3-7` | Sensible safe/lossy separation, compressor-reviewer loop, and reviewer checklist | Byte-preserving all code is overbroad; backup sidecars and unsupported frontmatter need target-specific justification |
-| `hy3.md `4-8` and `10-11` | Recognizes rate-distortion, negative constraints, and integrity risks | Contains the corpus’s most dangerous token hacks: base64, CJK translation, emoji flags, invented transclusion/frontmatter, and AST/prose deletion. Reject these defaults |
-| `kimi.md `3-8` | Strong GAP/no-invention rule, fact inventory, example awareness, and staged verification | Comments-as-free, symlinks, repeated poles, translation tricks, and fixed hard limits are harness- or model-specific |
-| `m3.md `3-9` | Useful distinctions among lexical, structural, referential, and semantic compression; notes cache stability and overcompression | Private shorthand, symbolic logic, hash IDs, imagined imports, top/bottom duplication, and graveyard sidecars create decode and drift risk |
-| `mimo.md `1-10` | Rate-distortion and decision-value framing; reversibility and runtime-vs-static distinctions | Internally mixes passive preload with retrieval, and recommends dictionaries, position deletion, and blanket frontmatter stripping |
-| `nvidia.md `2-9` | Good judgment matrix, two-stage validation, evaluation metrics, and anchor-contract idea | Mislabels many semantic deletions lossless, assumes images/cross-references are ignored, and imports prompt-compression claims too directly |
-| `qwen.md `4-12` | Most balanced practical sequence after `codex.md`; explicitly recognizes contradictory format evidence and warns about abbreviation dictionaries | Fixed ceilings, tail repetition, and positive-only wording remain heuristics, not defaults |
-| `spark1.md `4-9` | Correctly makes progressive disclosure central and preserves commands/gotchas | Telegraph triples, ID DSLs, abbreviation dictionaries, symlink synchronization, and aggressive ratio targets optimize apparent density over robustness |
-| `available_skills.md `1-5` | Useful map of caveman compression, context-engineering skills, SkillReducer, and extreme baselines | Repository popularity and self-reported ratios are time-sensitive; output-brevity tools are not equivalent to input-policy compression |
+| `claude-opus.md` §§1–12 | Concrete smell taxonomy, block classification, pitched links, conflict graph, checks, and a complete pipeline | Several “delete-on-sight” rules are role-blind; tail duplication and arbitrary budgets are weak. Its §13 worked example is **not compression**: it invents `pytest tests/unit -q`, a Docker command, a four-minute duration, and `api/` / `db/` gates absent from the source |
+| `codex.md` §§8, 19–22, 29–40 | Strongest conceptual treatment: semantic IR, ablation, expected residency, semantic checksum, discoverability tax, behavior-aware metrics | Some weights, ratios, and stage budgets are illustrative heuristics. “Discoverable” information still needs retrieval-cost and ambiguity tests |
+| `ds_flash.md` §§2–7 | Correct priority on representation, delete/relocate/rewrite order, progressive disclosure, and abbreviation caution | Calls destructive operations lossless; proposes unsupported metadata and fragile line-number routing |
+| `ds_pro.md` §§II–VI | Useful staged audit and explicit must-preserve list | Its lossless catalog includes semantic deletions; Telegraph English, dictionary backreferences, and toolchain-first absolutism are unsafe defaults |
+| `fable.md` §§3–8 | Clear compression ladder, tiered skill architecture, and executable-validation emphasis | Treats comments/frontmatter as broadly disposable and scripts as zero-token; several numerical claims are unsupported |
+| `gemini.md` §§2–7 | Emphasizes progressive disclosure, verification, and operational structure | Universal table conversion, predicate-logic shorthand, a verifier for every rule, memory purging, and “slot capacity” thresholds would add ambiguity or invented process |
+| `glm52.md` §§4–12 | Protected-facts pattern, faithfulness guard, hybrid-source idea, and measurable forms | Position-aware truncation, sandwich duplication, comment/frontmatter stripping, emoji, and hard SDE targets are not safe |
+| `grok.md` §§3–7 | Sensible safe/lossy separation, compressor-reviewer loop, and reviewer checklist | Byte-preserving all code is overbroad; backup sidecars and unsupported frontmatter need target-specific justification |
+| `hy3.md` §§4–8 and 10–11 | Recognizes rate-distortion, negative constraints, and integrity risks | Contains the corpus’s most dangerous token hacks: base64, CJK translation, emoji flags, invented transclusion/frontmatter, and AST/prose deletion. Reject these defaults |
+| `kimi.md` §§3–8 | Strong GAP/no-invention rule, fact inventory, example awareness, and staged verification | Comments-as-free, symlinks, repeated poles, translation tricks, and fixed hard limits are harness- or model-specific |
+| `m3.md` §§3–9 | Useful distinctions among lexical, structural, referential, and semantic compression; notes cache stability and overcompression | Private shorthand, symbolic logic, hash IDs, imagined imports, top/bottom duplication, and graveyard sidecars create decode and drift risk |
+| `mimo.md` §§1–10 | Rate-distortion and decision-value framing; reversibility and runtime-vs-static distinctions | Internally mixes passive preload with retrieval, and recommends dictionaries, position deletion, and blanket frontmatter stripping |
+| `nvidia.md` §§2–9 | Good judgment matrix, two-stage validation, evaluation metrics, and anchor-contract idea | Mislabels many semantic deletions lossless, assumes images/cross-references are ignored, and imports prompt-compression claims too directly |
+| `qwen.md` §§4–12 | Most balanced practical sequence after `codex.md`; explicitly recognizes contradictory format evidence and warns about abbreviation dictionaries | Fixed ceilings, tail repetition, and positive-only wording remain heuristics, not defaults |
+| `spark1.md` §§4–9 | Correctly makes progressive disclosure central and preserves commands/gotchas | Telegraph triples, ID DSLs, abbreviation dictionaries, symlink synchronization, and aggressive ratio targets optimize apparent density over robustness |
+| `available_skills.md` §§1–5 | Useful map of caveman compression, context-engineering skills, SkillReducer, and extreme baselines | Repository popularity and self-reported ratios are time-sensitive; output-brevity tools are not equivalent to input-policy compression |
 | `reasearch_links.md` | Useful raw discovery queue | A URL is not evidence. The queue mixes primary papers, product docs, blogs, repositories, and marketing and must never be cited as a finding |
 
 ### 12.1 Cross-source disagreements and independent verdicts
@@ -1093,7 +1287,7 @@ These are ranked by expected damage, not by how strange they look.
 
 Adding a missing command, verifier, scope gate, threshold, time estimate, or exception is
 authoring, not compression. It can be valuable only as a separately reviewed proposal.
-The `claude-opus.md `13` example demonstrates this failure while calling the additions
+The `claude-opus.md` §13 example demonstrates this failure while calling the additions
 “defensible.” A compressor must instead mark the gap.
 
 ### 2. Silently resolving contradictions
@@ -1404,11 +1598,25 @@ change. The future skill needs versioned platform profiles or a “verify curren
 step for structural changes. Unsupported or unknown clients should fall back to one
 portable Markdown file plus explicit pointers, not guessed magic syntax.
 
+### 15.8 Source trust and embedded instructions
+
+<!-- GAP: The local primary dossiers do not provide a sufficiently grounded policy for
+handling prompt injection or untrusted operational instructions embedded inside source
+documents being compressed. Before implementation, define source-authority boundaries,
+whether source text is data or executable instruction, and adversarial fixtures for this
+case. -->
+
+The implementation must not silently fill this gap from generic security folklore. It
+needs an explicit threat model and evaluation decision alongside the harness choice.
+
 ## 16. Reconciliation with the prior derived documents
 
-Sections 1-15 were frozen before this comparison. The pre-comparison file SHA-256 was
-`4AB34EDA1A6680DC6E4DC98552208759289EFD78DE65D0FBF3A2F3D9AD6C7E91`.
-Only then were `INDEX.md`, `EVIDENCE.md`, and `SYNTHESIS.md` read.
+The original foundation recorded its first independent-phase freeze with SHA-256
+`4AB34EDA1A6680DC6E4DC98552208759289EFD78DE65D0FBF3A2F3D9AD6C7E91`; that is a
+historical audit value, not the checksum of this revision. For this revision, the
+dossier-derived changes to §§1–15 were determined before directly opening `INDEX.md`,
+`EVIDENCE.md`, or `SYNTHESIS.md`. Those files were then used only for the comparison
+below.
 
 ### 16.1 Agreement
 
@@ -1432,19 +1640,19 @@ numerical ratios repeated across model-authored dossiers.
 
 | Prior derived position | Independent verdict | Reason |
 |---|---|---|
-| T3 scripts cost “0 tokens” (`SYNTHESIS.md `2.2`) | Scripts reduce prose residency but invocation, output, errors, and sometimes source inspection still cost context | Official skill docs describe on-demand execution, not literal zero total cost |
+| T3 scripts cost “0 tokens” (`SYNTHESIS.md` §2.2) | Scripts reduce prose residency but invocation, output, errors, and sometimes source inspection still cost context | Official skill docs describe on-demand execution, not literal zero total cost |
 | Root <=150 lines and skill <=500 lines are universal tier budgets | Treat these as platform guidance or local mandates; use behavioral and load budgets | Current Codex has a byte cap; Claude and Agent Skills publish recommendations; tasks vary |
-| Delete what the base model already knows (`2.4`) | Delete generic advice; ablate project facts only when target models know them and retrieval remains reliable | Model knowledge, versions, authority, and weaker-model behavior vary |
-| Structured forms beat prose for the same content (`2.8`) | Use them only for a matching schema, branch structure, grammar, or quantitative relation | Controlled format work shows model-specific rankings; tables and notation can add tokens or errors |
-| Repeat the top three rules at the tail (`3.3`) | Do not duplicate by default; use one canonical block, strong placement, and real enforcement | Lost-in-the-middle evidence does not test tail duplication; copies drift and consume attention |
-| Any new identifier is hallucination (`2.3`) | Existing contractual literals need exact preservation; explicitly authorized new reference paths or generated artifacts are legitimate | Architectural refactoring necessarily creates some reviewed identifiers |
+| Delete what the base model already knows (`SYNTHESIS.md` §2.4) | Delete generic advice; ablate project facts only when target models know them and retrieval remains reliable | Model knowledge, versions, authority, and weaker-model behavior vary |
+| Structured forms beat prose for the same content (`SYNTHESIS.md` §2.8) | Use them only for a matching schema, branch structure, grammar, or quantitative relation | Controlled format work shows model-specific rankings; tables and notation can add tokens or errors |
+| Repeat the top three rules at the tail (`SYNTHESIS.md` §3.3) | Do not duplicate by default; use one canonical block, strong placement, and real enforcement | Lost-in-the-middle evidence does not test tail duplication; copies drift and consume attention |
+| Any new identifier is hallucination (`SYNTHESIS.md` §2.3) | Existing contractual literals need exact preservation; explicitly authorized new reference paths or generated artifacts are legitimate | Architectural refactoring necessarily creates some reviewed identifiers |
 | Comments are free human notes | Only current Claude Code strips block HTML comments from injected `CLAUDE.md`; other readers and direct reads expose them | Harness-specific behavior was verified, not a Markdown property |
-| A well-formed compact context file is already proven better than no file (`4.1`) | This is the project hypothesis to test, not a general empirical fact | The efficiency study did not comprehensively establish functional equivalence; the controlled AGENTS study found small/non-significant success differences |
+| A well-formed compact context file is already proven better than no file (`SYNTHESIS.md` §4.1) | This is the project hypothesis to test, not a general empirical fact | The efficiency study did not comprehensively establish functional equivalence; the controlled AGENTS study found small/non-significant success differences |
 | Nested rules provide a universal conditional tier | Model each harness separately | Current Codex discovery follows root to CWD; Claude can load descendant `CLAUDE.md` on file access and supports path rules |
-| Images are broadly wrong for machine docs (`3.6`) | Keep critical text textual, but evaluate images by information role and multimodal harness | Some tasks and current agents intentionally consume images |
-| Removal ledger should always be emitted (`5, `6`) | Prefer VCS and an external report; create an unloaded ledger only for a real audit/anti-ratchet need | Sidecars can become stale, ambiguous, or accidentally loaded |
+| Images are broadly wrong for machine docs (`SYNTHESIS.md` §3.6) | Keep critical text textual, but evaluate images by information role and multimodal harness | Some tasks and current agents intentionally consume images |
+| Removal ledger should always be emitted (`SYNTHESIS.md` §§5–6) | Prefer VCS and an external report; create an unloaded ledger only for a real audit/anti-ratchet need | Sidecars can become stale, ambiguous, or accidentally loaded |
 
-The most serious source-level correction is `claude-opus.md `13`. Its “after” example
+The most serious source-level correction is `claude-opus.md` §13. Its “after” example
 adds commands, a timing claim, and path conditions that the “before” text never states.
 That is an authored policy proposal presented as compression. It violates the corpus’s
 own no-invention rule and must not seed an eval as a positive example.
@@ -1472,8 +1680,8 @@ These refine the pipeline without changing its central rankings.
 
 ### 16.4 Evidence-ledger check
 
-The earlier `EVIDENCE.md` correctly warned that every identifier was unverified. The
-independent pass resolved all 41 arXiv IDs:
+The earlier `EVIDENCE.md` initially warned that every identifier was unverified. Its
+subsequent dated audit records results for all 41 arXiv IDs:
 
 - 38 resolve to work matching the cited topic;
 - three resolve but are **wrong citations**, not missing papers:
@@ -1489,6 +1697,11 @@ scope-limited by their actual abstracts and methods.
 
 ### 16.5 Final self-check
 
+`INDEX.md` is useful as a routing aid but not as evidence. Its routes now consistently
+use the Windows-safe `docs/claude-opus.md` name, and its dossier categories broadly match
+the independent contribution audit in §12. The comparison did not use its signal tiers
+as evidence weights.
+
 The comparison caused **no reversal** of the independent core. It:
 
 - strengthened the rejection of fixed budgets, blanket “lossless” rules, and tail
@@ -1498,7 +1711,15 @@ The comparison caused **no reversal** of the independent core. It:
 - confirmed that the main remaining blocker is product scope and evaluation design, not
   a missing compression trick.
 
-The future skill should use ``1-15 as the normative basis and this section as the audit
+The 2026-08-09 revision independently re-read every dossier before repeating this
+cross-check. It found no new reversal, but made four practical improvements that the
+earlier foundation only implied: a transfer test for imported evidence, separate content/
+availability/representation/lifecycle loss channels, explicit equivalence gates for
+deduplication and tool enforcement, and a relocation gate with safe stop conditions.
+It also corrected malformed dossier-section references. No new internet research was
+used for those changes.
+
+The future skill should use §§1–15 as the normative basis and this section as the audit
 trail explaining where it differs from the earlier synthesis.
 
 ## 17. Primary references

@@ -45,18 +45,9 @@ problem. Files here are held to the standard they describe.
 - Treat every number in the corpus as unverified. Report ranges, not point estimates.
 - Update [docs/INDEX.md](docs/INDEX.md) whenever a file in `docs/` is added or renamed.
 
-## Known issue — fix before it costs more
+## Resolved filename collision
 
-`docs/claude.md` collides with the `CLAUDE.md` filename on Windows' case-insensitive
-filesystem, so Claude Code auto-loads all ~14.6K tokens of that dossier into any session
-touching `docs/`. It is the single largest avoidable context cost in the repo — in a
-project about context cost.
-
-```bash
-git mv docs/claude.md docs/claude-opus.md
-```
-
-Then update the references in `docs/INDEX.md`, `docs/SYNTHESIS.md`, and this file.
+The Claude Opus dossier is `docs/claude-opus.md`. 
 
 ## Corpus conventions
 
