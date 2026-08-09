@@ -3,9 +3,10 @@
 Map of `docs/`. Every entry states **what is inside** and **when to open it**, so you can
 route without reading. Sizes are estimates at ~3.9 chars/token.
 
-**Read [SYNTHESIS.md](SYNTHESIS.md) first.** It merges all 15 dossiers. Open an individual
-dossier only when the synthesis points you at one, or when you need a worked example the
-synthesis compressed away.
+**Read [COMPRESSION-FOUNDATION_v2.md](COMPRESSION-FOUNDATION_v2.md) first.** It is the normative
+basis for the skill and is self-contained. Use [SYNTHESIS.md](SYNTHESIS.md) when you want the
+agreement counts across the 15 dossiers. Open an individual dossier only when one of those points
+you at it, or when you need a worked example they compressed away.
 
 ## Contents
 
@@ -23,9 +24,11 @@ Written by this project. These supersede the raw dossiers for day-to-day work.
 
 | File | Lines | What's inside | When to read |
 |---|---:|---|---|
-| [SYNTHESIS.md](SYNTHESIS.md) | 366 | Consensus findings, the 6 real disagreements with adopted verdicts, contradictory numbers, 15 single-source techniques, the canonical 8-stage pipeline, open questions | **Always, first.** Before any design decision |
-| [EVIDENCE.md](EVIDENCE.md) | 152 | Citation ledger: 41 arXiv IDs with citing dossiers and verification status, known citation conflicts, primary vendor docs, prior-art repos | Before citing a number externally, or when a claim looks too good |
-| [INDEX.md](INDEX.md) | this | Corpus map and routing | When the synthesis points you to a dossier and you need to pick one |
+| [COMPRESSION-FOUNDATION_v2.md](COMPRESSION-FOUNDATION_v2.md) | 1949 | **Normative basis for the skill.** Effectiveness×safety-ranked rule catalog with a one-screen priority ladder, four mandatory gates, before/after transformation patterns, runnable ripgrep detectors, budgets tagged verified-vs-corpus, Claude Code load semantics verified 2026-08-09, validation protocol, `SKILL.md` draft, prompt-injection policy | **First, and before any design decision.** Self-contained; supersedes v1 |
+| [COMPRESSION-FOUNDATION.md](COMPRESSION-FOUNDATION.md) | 1771 | Superseded v1. Retained for its audit trail: the independent-first method record, the dossier-by-dossier critique, and the reconciliation against SYNTHESIS | Only to trace why a v2 verdict differs from the earlier synthesis |
+| [SYNTHESIS.md](SYNTHESIS.md) | 366 | Consensus findings with per-claim agreement counts `[n/15]`, the 6 disagreements, contradictory numbers, 15 single-source techniques, the 8-stage pipeline | When you need to know *how many* dossiers back a claim. Its verdicts are superseded where v2 §A.2 says so |
+| [EVIDENCE.md](EVIDENCE.md) | 240 | Citation ledger: 41 arXiv IDs with citing dossiers, the 3 confirmed wrong attributions, vendor docs, prior-art repos | Before citing a number externally. Cross-check against v2 Appendix B for what was re-verified |
+| [INDEX.md](INDEX.md) | this | Corpus map and routing | When something points you to a dossier and you need to pick one |
 
 ---
 
@@ -97,8 +100,8 @@ judged after reading all 17 files. It is not a judgement of the authoring model.
 
 ## Corpus facts
 
-- **17 files, 8,107 lines, ~96K tokens, ~375 KB.** Reading the corpus costs roughly half a
-  200K context window.
+- **17 dossier/survey files, 8,107 lines, ~96K tokens, ~375 KB.** Reading the raw corpus costs
+  roughly half a 200K context window. The derived documents exist so you never pay that twice.
 - **All dated 2026-08-09**, produced independently by different models answering the same
   research brief. Overlap is therefore *convergent evidence*, not citation chains — that is
   what makes the agreement counts in SYNTHESIS.md meaningful.
