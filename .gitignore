@@ -141,3 +141,6 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+.claude/skills/skill-creator/scripts/__pycache__/
+skills/compress-llm-documentation/scripts/__pycache__/
+skills/compress-llm-documentation-workspace/iteration-1/
